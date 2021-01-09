@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Calculator</title>
+    <style>
+        p, input {
+            font-family: monospace;
+        }
+
+        p {
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+
+<div id="myCalc">
+    <p>Addition</p>
+    <p><label for="calc-x-input">X </label><input id="calc-x-input" value="0" onkeyup="handleXCalcEvent()"></p>
+    <p>
+        <label for="calc-operation">Select operation</label>
+        <select id="calc-operation" onchange="handleOperationEvent()">
+            <option value="PLUS" label="x+y"></option>
+            <option value="SUBTRACT" label="x-y"></option>
+            <option value="MULTIPLY" label="x*y"></option>
+            <option value="DIVIDE" label="x/y"></option>
+            <option value="XYZ" label="x+y-z"></option>
+            <option value="ZYX" label="x-y+z"></option>
+            <option value="x*y/z" label="x*y/z"></option>
+            <option value="x/y*z" label="x/y*z"></option>
+            <option value="x/y/z" label="x/y/z"></option>
+            <option value="x/y-z" label="x/y-z"></option>
+            <option value="x/y+z" label="x/y+z"></option>
+            <option value="x*y-z" label="x*y-z"></option>
+            <option value="x*y+z" label="x*y+z"></option>
+            <option value="x+y*z" label="x+y*z"></option>
+            <option value="x+y/z" label="x+y/z"></option>
+            <option value="x-y*z" label="x-y*z"></option>
+            <option value="x-y/z" label="x-y/z"></option>
+            <option value="x+y+z" label="x+y+z"></option>
+            <option value="x-y-z" label="x-y-z"></option>
+        </select>
+    </p>
+    <p><label for="calc-y-input">Y </label><input id="calc-y-input" value="0" onkeyup="handleYCalcEvent()"></p>
+    <p>_________________________________</p>
+    <p><label for="calc-z-input">Z </label><input id="calc-z-input" value="0" onkeyup="handleZCalcEvent()"></p>
+    <p>_________________________________</p>
+    <p>= <span id="calc-result"></span></p>
+</div>
+
+<script type="text/javascript">
+    let calculator
+    // evaluates only once after loading web page
+    window.onload = function () {
+        // User Interface fields
+        const xElement = document.getElementById("calc-x-input")
+        const yElement = document.getElementById("calc-y-input")
+        const zElement = document.getElementById("calc-z-input")
+        const resultElement = document.getElementById("calc-result")
+        const selectedOperation = document.getElementById("calc-operation")
+        // Create calculator object
+        calculator = new Calc(xElement, yElement,zElement , resultElement, selectedOperation)
+        calculator.updateX()
+        calculator.updateY()
+        calculator.updateZ()
+    }
+    // On change X field value
+    function handleXCalcEvent() {
+        calculator.updateX()
+    }
+    // On change Y filed value
+    function handleYCalcEvent() {
+        calculator.updateY()
+    }
+    // On change Z filed value
+    function handleZCalcEvent() {
+        calculator.updateZ()
+    }
+
+    // On update
+    function handleOperationEvent() {
+        calculator.render()
+    }
+
+    function Calc(xInput, yInput, zInput, output, operationList) {
+        this.xInput = xInput
+        this.yInput = yInput
+        this.zInput = zInput
+        this.output = output
+        this.operationList = operationList
+        this.xValue = 0
+        this.yValue = 0
+        this.zValue = 0
+        this.result = 0
+        // parse X field value
+        this.updateX = function () {
+            let number = parseFloat(this.xInput.value)
+            if (isNaN(number) || !isFinite(number)) {
+                return
+            }
+            this.xValue = number
+            this.render()
+        }
+        // parse Y field value
+        this.updateY = function () {
+            let number = parseFloat(this.yInput.value)
+            if (isNaN(number) || !isFinite(number)) {
+                return
+            }
+            this.yValue = number
+            this.render()
+        }
+        // parse Z field value
+        this.updateZ = function () {
+            let number = parseFloat(this.zInput.value)
+            if (isNaN(number) || !isFinite(number)) {
+                return
+            }
+            this.zValue = number
+            this.render()
+        }
+        // define result
+        this.render = function () {
+            const operation = this.operationList.value
+            switch (operation) {
+                case 'PLUS': this.result = this.xValue + this.yValue
+                    break
+                case 'MULTIPLY': this.result = this.xValue * this.yValue
+                    break
+                case 'SUBTRACT': this.result = this.xValue - this.yValue
+                    break
+                case 'ZYX': this.result = this.xValue - this.yValue + this.zValue
+                    break
+                case 'XYZ': this.result = this.xValue + this.yValue - this.zValue
+                    break
+                case 'DIVIDE': this.result = this.xValue / this.yValue
+                    break
+                case 'x*y/z': this.result = this.xValue * this.yValue / this.zValue
+                    break
+                case 'x/y*z': this.result = this.xValue / this.yValue * this.zValue
+                    break
+                case 'x/y/z': this.result = this.xValue / this.yValue / this.zValue
+                    break
+                case 'x/y-z': this.result = this.xValue / this.yValue - this.zValue
+                    break
+                case 'x-y*z': this.result = this.xValue - this.yValue * this.zValue
+                    break
+                case 'x+y*z': this.result = this.xValue + this.yValue * this.zValue
+                    break
+                case 'x*y-z': this.result = this.xValue * this.yValue - this.zValue
+                    break
+                case 'x/y+z': this.result = this.xValue / this.yValue + this.zValue
+                    break
+                case 'x*y+z': this.result = this.xValue * this.yValue + this.zValue
+                    break
+                case 'x+y/z': this.result = this.xValue + this.yValue / this.zValue
+                    break
+                case 'x-y/z': this.result = this.xValue - this.yValue / this.zValue
+                    break
+                case 'x/y-z': this.result = this.xValue / this.yValue - this.zValue
+                    break
+                case 'x*y+z': this.result = this.xValue * this.yValue + this.zValue
+                    break
+                case 'x+y/z': this.result = this.xValue + this.yValue / this.zValue
+                    break
+                case 'x-y/z': this.result = this.xValue - this.yValue / this.zValue
+                    break
+                case 'x/y-z': this.result = this.xValue / this.yValue - this.zValue
+                    break
+                    case 'x-y-z': this.result = this.xValue - this.yValue - this.zValue
+                    break
+                case 'x+y+z': this.result = this.xValue + this.yValue + this.zValue
+                    break
+                default: this.result = 'UNKNOWN OPERATION'
+            }
+
+            this.output.innerText = this.result
+        }
+    }
+</script>
+
+Артем я тебя взламиваю
+на канкулятор поиграй пока я тебя взламиваю
+</body>
+</html>
